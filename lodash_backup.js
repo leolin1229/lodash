@@ -4212,12 +4212,14 @@
      * Creates an array of elements split into groups the length of `size`.
      * If `collection` can't be split evenly, the final chunk will be the remaining
      * elements.
-     *
+     * 
+     * 把数组元素分成不同组，每组大小为'size'，如果子集不能平均分，则最后一块是均分后余下的元素。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to process.
-     * @param {number} [size=1] The length of each chunk.
+     * @param {Array} array The array to process.需要访问的数组。
+     * @param {number} [size=1] The length of each chunk.每一块的长度。
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the new array containing chunks.
      * @example
@@ -4232,7 +4234,7 @@
       if (guard ? isIterateeCall(array, size, guard) : size == null) {
         size = 1;
       } else {
-        size = nativeMax(nativeFloor(size) || 1, 1);
+        size = nativeMax(nativeFloor(size) || 1, 1);// nativeMax = Math.max
       }
       var index = 0,
           length = array ? array.length : 0,
