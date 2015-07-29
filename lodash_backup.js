@@ -764,12 +764,15 @@
         stringProto = String.prototype;
 
     /** Used to resolve the decompiled source of functions. */
+    /**  用来解决函数反编译 **/
     var fnToString = Function.prototype.toString;
 
     /** Used to check objects for own properties. */
+    /* 检测对象用有自身属性 */
     var hasOwnProperty = objectProto.hasOwnProperty;
 
     /** Used to generate unique IDs. */
+    /* 生成唯一ID（？） */
     var idCounter = 0;
 
     /** Used to infer the `Object` constructor. */
@@ -785,6 +788,7 @@
     var oldDash = root._;
 
     /** Used to detect if a method is native. */
+    /* 检测原生方法 */
     var reIsNative = RegExp('^' +
       fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
       .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
