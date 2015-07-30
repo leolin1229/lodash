@@ -326,6 +326,8 @@
   /**
    * The base implementation of `_.indexOf` without support for binary searches.
    *
+   * 不支持二进制搜索的`_.indexOf`私有实现
+   * 
    * @private
    * @param {Array} array The array to search.
    * @param {*} value The value to search for.
@@ -587,6 +589,8 @@
   /**
    * Checks if `value` is object-like.
    *
+   * 判断是否类对象（译者注：不包括`function`）
+   * 
    * @private
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
@@ -1157,6 +1161,8 @@
     /**
      * Creates a cache object to store key/value pairs.
      *
+     * 创建一个存储键值对的缓存对象
+     * 
      * @private
      * @static
      * @name Cache
@@ -1169,6 +1175,8 @@
     /**
      * Removes `key` and its value from the cache.
      *
+     * 从缓存对象中移除`key`所对应的值
+     * 
      * @private
      * @name delete
      * @memberOf _.memoize.Cache
@@ -1182,6 +1190,8 @@
     /**
      * Gets the cached value for `key`.
      *
+     * 获取缓存对象中`key`对应的值（当key = '__proto__'返回undefined）
+     * 
      * @private
      * @name get
      * @memberOf _.memoize.Cache
@@ -1195,6 +1205,8 @@
     /**
      * Checks if a cached value for `key` exists.
      *
+     * 查找缓存对象是否存在`key`
+     * 
      * @private
      * @name has
      * @memberOf _.memoize.Cache
@@ -1208,6 +1220,8 @@
     /**
      * Sets `value` to `key` of the cache.
      *
+     * 设置key/value（key不能是'__proto__'）
+     * 
      * @private
      * @name set
      * @memberOf _.memoize.Cache
@@ -1228,6 +1242,10 @@
      *
      * Creates a cache object to store unique values.
      *
+     * 创建一个缓存对象存储唯一值
+     * （译者注：缓存使用了两种数据结构，1.字符串和对象类型使用set；2.其他数据类型使用hash
+     * 不把字符串放进hash的原因是使用中括号操作符访问时key会隐式转换成string，如var o = {}, o[{}] = 123, console.log(o)输出{'[object Object]': 123}）
+     * 
      * @private
      * @param {Array} [values] The values to cache.
      */
@@ -1244,6 +1262,8 @@
      * Checks if `value` is in `cache` mimicking the return signature of
      * `_.indexOf` by returning `0` if the value is found, else `-1`.
      *
+     * 检测缓存中是否有`value`
+     * 
      * @private
      * @param {Object} cache The cache to search.
      * @param {*} value The value to search for.
@@ -1259,6 +1279,8 @@
     /**
      * Adds `value` to the cache.
      *
+     * 添加`value`到缓存
+     * 
      * @private
      * @name push
      * @memberOf SetCache
@@ -1278,6 +1300,8 @@
     /**
      * Creates a new array joining `array` with `other`.
      *
+     * 两个数组合并，返回一个合并后的新数组
+     * 
      * @private
      * @param {Array} array The array to join.
      * @param {Array} other The other array to join.
@@ -1303,6 +1327,8 @@
      * A specialized version of `_.forEach` for arrays without support for
      * callback shorthands.
      *
+     * `_.forEach`的另一个版本
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1324,6 +1350,8 @@
      * A specialized version of `_.forEachRight` for arrays without support for
      * callback shorthands.
      *
+     * `_.forEachRight`的另一版本
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1344,6 +1372,8 @@
      * A specialized version of `_.every` for arrays without support for
      * callback shorthands.
      *
+     * `_.every`的另一版本
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} predicate The function invoked per iteration.
@@ -1365,6 +1395,8 @@
      * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
      * with one argument: (value).
      *
+     * 求极值（？）
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1401,6 +1433,8 @@
      * A specialized version of `_.filter` for arrays without support for
      * callback shorthands.
      *
+     * `_.filter`的另一版本，返回过滤后的新数组
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} predicate The function invoked per iteration.
@@ -1425,6 +1459,8 @@
      * A specialized version of `_.map` for arrays without support for callback
      * shorthands.
      *
+     * `_.map`的另一版本，返回映射后的新数组
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1444,6 +1480,8 @@
     /**
      * Appends the elements of `values` to `array`.
      *
+     * 把元素数组添加到数组末尾（译者注：第二参数必须是数组，结果会修改原实参数组）
+     * 
      * @private
      * @param {Array} array The array to modify.
      * @param {Array} values The values to append.
@@ -1464,11 +1502,13 @@
      * A specialized version of `_.reduce` for arrays without support for
      * callback shorthands.
      *
+     * `_.reduce`的另一版本
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
+     * @param {*} [accumulator] The initial value.累加器（初始值）
+     * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.指定使用数组第一个元素作为初始值
      * @returns {*} Returns the accumulated value.
      */
     function arrayReduce(array, iteratee, accumulator, initFromArray) {
@@ -1488,6 +1528,8 @@
      * A specialized version of `_.reduceRight` for arrays without support for
      * callback shorthands.
      *
+     * `_.reduceRight`的另一版本
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1510,6 +1552,8 @@
      * A specialized version of `_.some` for arrays without support for callback
      * shorthands.
      *
+     * `_.some`的另一版本（至少一个元素满足条件return true）
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} predicate The function invoked per iteration.
@@ -1531,6 +1575,8 @@
      * A specialized version of `_.sum` for arrays without support for callback
      * shorthands.
      *
+     * `_.sum`的另一版本
+     * 
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1542,7 +1588,7 @@
           result = 0;
 
       while (++index < length) {
-        result += +iteratee(array[index]) || 0;
+        result += +iteratee(array[index]) || 0;// 加号强制转换为Number型
       }
       return result;
     }
@@ -1552,6 +1598,9 @@
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
+     * 对`object`的`key`对应值重新赋值或添加`key`属性
+     * （译者注：对象内部比较`key`时使用了[`SameValueZero`]一种内部比较算法，该算法把NaN==NaN返回true，+0==-0也是true）
+     * 
      * @private
      * @param {Object} object The object to augment.
      * @param {string} key The key of the property to assign.
@@ -1568,6 +1617,8 @@
     /**
      * This function is like `assignValue` except that it doesn't assign `undefined` values.
      *
+     * 类似`assignValue`函数但不赋值undefined
+     * 
      * @private
      * @param {Object} object The object to augment.
      * @param {string} key The key of the property to assign.
@@ -1727,6 +1778,8 @@
      * The base implementation of `_.difference` which accepts a single array
      * of values to exclude.
      *
+     * `_.difference`的私有实现
+     * 
      * @private
      * @param {Array} array The array to inspect.
      * @param {Array} values The values to exclude.
@@ -1750,7 +1803,7 @@
         isCommon = false;
         values = cache;
       }
-      outer:
+      outer:// label 语句
       while (++index < length) {
         var value = array[index];
 
@@ -1881,8 +1934,10 @@
     /**
      * The base implementation of `_.flatten` with support for restricting flattening.
      *
+     * `_.flatten`的私有实现，支持扁平化限制。
+     * 
      * @private
-     * @param {Array} array The array to flatten.
+     * @param {Array} array The array to flatten.需要扁平化的数组。
      * @param {boolean} [isDeep] Specify a deep flatten.
      * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
      * @param {Array} [result=[]] The initial result value.
@@ -2572,6 +2627,8 @@
     /**
      * The base implementation of `_.slice` without an iteratee call guard.
      *
+     * 无迭代调用版`_.slice`实现
+     * 
      * @private
      * @param {Array} array The array to slice.
      * @param {number} [start=0] The start position.
@@ -2590,7 +2647,7 @@
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : ((end - start) >>> 0);
+      length = start > end ? 0 : ((end - start) >>> 0);// >>> 表示无符号右移运算，保证结果非负
       start >>>= 0;
 
       var result = Array(length);
@@ -3717,6 +3774,8 @@
      * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
      * that affects Safari on at least iOS 8.1-8.3 ARM64.
      *
+     * 获取对象的长度属性
+     * 
      * @private
      * @param {Object} object The object to query.
      * @returns {*} Returns the "length" value.
@@ -3743,6 +3802,8 @@
     /**
      * Gets the native function at `key` of `object`.
      *
+     * 获取`object`的原生`key`对应的函数
+     * 
      * @private
      * @param {Object} object The object to query.
      * @param {string} key The key of the method to get.
@@ -3896,6 +3957,8 @@
     /**
      * Checks if `value` is array-like.
      *
+     * 判断是否类数组类型
+     * 
      * @private
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
@@ -3922,11 +3985,13 @@
     /**
      * Checks if the provided arguments are from an iteratee call.
      *
+     * 检测提供的参数是否来自迭代调用。
+     * 
      * @private
-     * @param {*} value The potential iteratee value argument.
-     * @param {*} index The potential iteratee index or key argument.
-     * @param {*} object The potential iteratee object argument.
-     * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
+     * @param {*} value The potential iteratee value argument.迭代值参数。
+     * @param {*} index The potential iteratee index or key argument.迭代索引或关键字参数。
+     * @param {*} object The potential iteratee object argument.迭代对象参数。
+     * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.如果来自迭代调用就返回'true'。
      */
     function isIterateeCall(value, index, object) {
       if (!isObject(object)) {
@@ -3988,12 +4053,14 @@
      *
      * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
      *
+     * 检测值是否类数组长度
+     * 
      * @private
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
      */
     function isLength(value) {
-      return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+      return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;// 类数组的长度必须 ≤ 2^53-1
     }
 
     /**
@@ -4220,8 +4287,8 @@
      * @category Array
      * @param {Array} array The array to process.需要访问的数组。
      * @param {number} [size=1] The length of each chunk.每一块的长度。
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {Array} Returns the new array containing chunks.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.使得对部分函数像'_.map'可用于迭代器回调。
+     * @returns {Array} Returns the new array containing chunks.返回包含块的新数组。
      * @example
      *
      * _.chunk(['a', 'b', 'c', 'd'], 2);
@@ -4234,7 +4301,7 @@
       if (guard ? isIterateeCall(array, size, guard) : size == null) {
         size = 1;
       } else {
-        size = nativeMax(nativeFloor(size) || 1, 1);// nativeMax = Math.max
+        size = nativeMax(nativeFloor(size) || 1, 1);// nativeMax = Math.max()
       }
       var index = 0,
           length = array ? array.length : 0,
@@ -4251,11 +4318,13 @@
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are falsey.
      *
+     * 返回一个去除所有false数组的array副本，`false`, `null`, `0`, `""`, `undefined`, and `NaN`都是false值。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to compact.
-     * @returns {Array} Returns the new array of filtered values.
+     * @param {Array} array The array to compact.数组。
+     * @returns {Array} Returns the new array of filtered values.返回过滤后的新数组。
      * @example
      *
      * _.compact([0, 1, false, 2, '', 3]);
@@ -4269,6 +4338,7 @@
 
       while (++index < length) {
         var value = array[index];
+        // 判断falsey值
         if (value) {
           result[++resIndex] = value;
         }
@@ -4281,12 +4351,14 @@
      * provided arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
+     * 返回一个不包含在提供的数组的唯一值数组。（译者注：即只出现在第一个参数数组里的元素所组成的新数组）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to inspect.
-     * @param {...Array} [values] The arrays of values to exclude.
-     * @returns {Array} Returns the new array of filtered values.
+     * @param {Array} array The array to inspect.需要检查的数组。
+     * @param {...Array} [values] The arrays of values to exclude.需要排除掉的数组。
+     * @returns {Array} Returns the new array of filtered values.返回过滤后的新数组。
      * @example
      *
      * _.difference([1, 2, 3], [4, 2]);
@@ -7479,12 +7551,14 @@
      *
      * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
      *
+     * 返回一个应用了剩余参数的新函数
+     * 
      * @static
      * @memberOf _
      * @category Function
-     * @param {Function} func The function to apply a rest parameter to.
-     * @param {number} [start=func.length-1] The start position of the rest parameter.
-     * @returns {Function} Returns the new function.
+     * @param {Function} func The function to apply a rest parameter to.用于剩余参数的函数。
+     * @param {number} [start=func.length-1] The start position of the rest parameter.剩余参数开始位置。
+     * @returns {Function} Returns the new function.返回新函数。
      * @example
      *
      * var say = _.restParam(function(what, names) {
@@ -7514,6 +7588,7 @@
           case 1: return func.call(this, args[0], rest);
           case 2: return func.call(this, args[0], args[1], rest);
         }
+        // 以下是指定剩余参数索引>=3的情况
         var otherArgs = Array(start + 1);
         index = -1;
         while (++index < start) {
@@ -8118,6 +8193,8 @@
      * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
+     * 检测参数值是否'Object'类型(例如，数组、函数、对象、正则、`new Number(0)`还有`new String('')`)
+     * 
      * @static
      * @memberOf _
      * @category Lang
