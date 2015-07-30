@@ -326,7 +326,7 @@
   /**
    * The base implementation of `_.indexOf` without support for binary searches.
    *
-   * 不支持二进制搜索的`_.indexOf`私有实现
+   * 不支持二进制搜索的`_.indexOf`基本实现
    * 
    * @private
    * @param {Array} array The array to search.
@@ -1638,9 +1638,11 @@
      * The base implementation of `_.assign` without support for multiple sources
      * or `customizer` functions.
      *
+     * 不支持多源对象和自定义函数的`_.assign`实现
+     * 
      * @private
-     * @param {Object} object The destination object.
-     * @param {Object} source The source object.
+     * @param {Object} object The destination object.目标对象。
+     * @param {Object} source The source object.源对象。
      * @returns {Object} Returns `object`.
      */
     function baseAssign(object, source) {
@@ -1650,6 +1652,8 @@
     /**
      * The base implementation of `_.at` without support for individual path arguments.
      *
+     * 不支持逗号分割的单个路径参数的`_.at`基本实现（？）
+     * 
      * @private
      * @param {Object} object The object to iterate over.
      * @param {string[]} paths The property paths of elements to pick.
@@ -1671,13 +1675,15 @@
      * The base implementation of `_.clone` and `_.cloneDeep` which tracks
      * traversed objects.
      *
+     * `_.clone` 和 `_.cloneDeep`的基本实现
+     * 
      * @private
-     * @param {*} value The value to clone.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @param {Function} [customizer] The function to customize cloning.
-     * @param {string} [key] The key of `value`.
-     * @param {Object} [object] The object `value` belongs to.
-     * @param {Array} [stackA=[]] Tracks traversed source objects.
+     * @param {*} value The value to clone.需要复制的值。
+     * @param {boolean} [isDeep] Specify a deep clone.指定深复制。
+     * @param {Function} [customizer] The function to customize cloning.自定义复制函数。
+     * @param {string} [key] The key of `value`.`value`的key。
+     * @param {Object} [object] The object `value` belongs to.`value`所属的对象。
+     * @param {Array} [stackA=[]] Tracks traversed source objects.记录遍历源对象。
      * @param {Array} [stackB=[]] Associates clones with source counterparts.
      * @returns {*} Returns the cloned value.
      */
@@ -1741,16 +1747,19 @@
      * The base implementation of `_.create` without support for assigning
      * properties to the created object.
      *
+     * `_.create`的基本实现，不能给创建的对象添加属性。
+     * （译者注：a = Object.create(b)的内部原理是把a.__proto__指向b）
+     * 
      * @private
      * @param {Object} prototype The object to inherit from.
      * @returns {Object} Returns the new object.
      */
     var baseCreate = (function() {
-      function object() {}
+      function object() {}// 利用object函数作为中介
       return function(prototype) {
         if (isObject(prototype)) {
           object.prototype = prototype;
-          var result = new object;
+          var result = new object;//result.__proto__ = object.prototype = prototype
           object.prototype = undefined;
         }
         return result || {};
@@ -1778,7 +1787,7 @@
      * The base implementation of `_.difference` which accepts a single array
      * of values to exclude.
      *
-     * `_.difference`的私有实现
+     * `_.difference`的基本实现
      * 
      * @private
      * @param {Array} array The array to inspect.
@@ -1934,7 +1943,7 @@
     /**
      * The base implementation of `_.flatten` with support for restricting flattening.
      *
-     * `_.flatten`的私有实现，支持扁平化限制。
+     * `_.flatten`的基本实现，支持扁平化限制。
      * 
      * @private
      * @param {Array} array The array to flatten.需要扁平化的数组。
