@@ -7666,7 +7666,7 @@
      *
      * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
      *
-     * 返回一个应用了剩余参数的新函数
+     * 返回一个应用了剩余参数的新函数。
      * 
      * @static
      * @memberOf _
@@ -11561,6 +11561,7 @@
     memoize.Cache = MapCache;
 
     // Add functions that return wrapped values when chaining.
+    // 把返回值是封装值（对象、函数等非基本数据类型）的函数挂载到lodash.prototype
     lodash.after = after;
     lodash.ary = ary;
     lodash.assign = assign;
