@@ -326,7 +326,7 @@
   /**
    * The base implementation of `_.indexOf` without support for binary searches.
    *
-   * 不支持二进制搜索的`_.indexOf`基本实现
+   * 不支持搜索的`_.indexOf`基本实现
    * 
    * @private
    * @param {Array} array The array to search.
@@ -829,7 +829,7 @@
         POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
 
     /** Used as references for the maximum length and index of an array. */
-    var MAX_ARRAY_LENGTH = 4294967295,
+    var MAX_ARRAY_LENGTH = 4294967295,// 2^32 - 1
         MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
         HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
@@ -1770,6 +1770,8 @@
      * The base implementation of `_.delay` and `_.defer` which accepts an array
      * of `func` arguments.
      *
+     * `_.delay` 和 `_.defer`的基本实现，接收函数数组参数
+     * 
      * @private
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
@@ -1780,6 +1782,9 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
+      // apply第一参数undefined或null时在非严格模式下指向JS指向环境的全局对象，call同理
+      // 其中，严格模式下情况又有所不同，ES3比较宽容尽量去揣测代码意图。ES5严格模式（ie6/7/8/9除外）则不再揣测
+      // 给call/apply传入的任何参数不再转换。
       return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
 
@@ -1835,6 +1840,8 @@
     /**
      * The base implementation of `_.forEach` without support for callback shorthands.
      *
+     * 无回调函数版的`_.forEach`基本实现
+     * 
      * @private
      * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1845,6 +1852,8 @@
     /**
      * The base implementation of `_.forEachRight` without support for callback shorthands.
      *
+     * 无回调函数版的`_.forEachRight`基本实现
+     * 
      * @private
      * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
@@ -1855,6 +1864,8 @@
     /**
      * The base implementation of `_.every` without support for callback shorthands.
      *
+     * 无回调函数版的`_.every`基本实现
+     * 
      * @private
      * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
@@ -1863,7 +1874,7 @@
     function baseEvery(collection, predicate) {
       var result = true;
       baseEach(collection, function(value, index, collection) {
-        result = !!predicate(value, index, collection);
+        result = !!predicate(value, index, collection);// 强制转Boolean
         return result;
       });
       return result;
@@ -1872,6 +1883,8 @@
     /**
      * The base implementation of `_.fill` without an iteratee call guard.
      *
+     * 无迭代函数版的`_.fill`基本实现（修改原数组）
+     * 
      * @private
      * @param {Array} array The array to fill.
      * @param {*} value The value to fill `array` with.
@@ -1890,7 +1903,7 @@
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : (end >>> 0);
+      length = start > end ? 0 : (end >>> 0);// 无符号右移运算，作用是取整
       start >>>= 0;
 
       while (start < length) {
@@ -1902,8 +1915,10 @@
     /**
      * The base implementation of `_.filter` without support for callback shorthands.
      *
+     * 无迭代函数版的`_.filter`基本实现（返回新数组）
+     * 
      * @private
-     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.参数可以是数组或对象
      * @param {Function} predicate The function invoked per iteration.
      * @returns {Array} Returns the new filtered array.
      */
@@ -1922,6 +1937,8 @@
      * support for callback shorthands, which iterates over `collection` using
      * the provided `eachFunc`.
      *
+     * 无迭代函数版的`_.find` 和 `_.findKey`基本实现
+     * 
      * @private
      * @param {Array|Object} collection The collection to search.
      * @param {Function} predicate The function invoked per iteration.
@@ -1943,13 +1960,13 @@
     /**
      * The base implementation of `_.flatten` with support for restricting flattening.
      *
-     * `_.flatten`的基本实现，支持扁平化限制。
+     * `_.flatten`的基本实现。
      * 
      * @private
      * @param {Array} array The array to flatten.需要扁平化的数组。
-     * @param {boolean} [isDeep] Specify a deep flatten.
-     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
-     * @param {Array} [result=[]] The initial result value.
+     * @param {boolean} [isDeep] Specify a deep flatten.指定是否递归扁平化（true表示降成一维数组）。
+     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.限定只能是类数组对象。
+     * @param {Array} [result=[]] The initial result value.初始值。
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isDeep, isStrict, result) {
@@ -1960,13 +1977,13 @@
 
       while (++index < length) {
         var value = array[index];
-        if (isObjectLike(value) && isArrayLike(value) &&
-            (isStrict || isArray(value) || isArguments(value))) {
+        if (isObjectLike(value) && isArrayLike(value) && // 必须是类数组对象（包括了arguments对象或DOM对象）
+            (isStrict || isArray(value) || isArguments(value))) {// 类数组、数组、参数对象
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
             baseFlatten(value, isDeep, isStrict, result);
           } else {
-            arrayPush(result, value);
+            arrayPush(result, value);// 调用自己实现的array.push方法
           }
         } else if (!isStrict) {
           result[result.length] = value;
@@ -2636,7 +2653,7 @@
     /**
      * The base implementation of `_.slice` without an iteratee call guard.
      *
-     * 无迭代调用版`_.slice`实现
+     * 无迭代调用版`_.slice`基本实现
      * 
      * @private
      * @param {Array} array The array to slice.
@@ -2748,7 +2765,7 @@
           length = array.length,
           isCommon = indexOf === baseIndexOf,
           isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
-          seen = isLarge ? createCache() : null,
+          seen = isLarge ? createCache() : null,// createCache创建一个Set
           result = [];
 
       if (seen) {
@@ -4069,7 +4086,8 @@
      * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
      */
     function isLength(value) {
-      return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;// 类数组的长度必须 ≤ 2^53-1
+      // ES6规定类数组的长度必须 ≤ 2^53-1
+      return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
     }
 
     /**
@@ -4375,20 +4393,22 @@
      */
     var difference = restParam(function(array, values) {
       return (isObjectLike(array) && isArrayLike(array))
-        ? baseDifference(array, baseFlatten(values, false, true))
+        ? baseDifference(array, baseFlatten(values, false, true)) // baseFlatten使数组扁平化
         : [];
     });
 
     /**
      * Creates a slice of `array` with `n` elements dropped from the beginning.
      *
+     * 从前往后扔掉数组的n个元素。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {number} [n=1] The number of elements to drop.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {number} [n=1] The number of elements to drop.元素扔掉的个数（默认为1）。
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * _.drop([1, 2, 3]);
@@ -4416,13 +4436,16 @@
     /**
      * Creates a slice of `array` with `n` elements dropped from the end.
      *
+     * 从后往前扔掉数组的n个元素。
+     * 
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {number} [n=1] The number of elements to drop.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组
+     * @param {number} [n=1] The number of elements to drop.元素扔掉的个数
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * _.dropRight([1, 2, 3]);
@@ -4454,12 +4477,14 @@
      * Elements are dropped until `predicate` returns falsey. The predicate is
      * invoked with three arguments: (value, index, array).
      *
+     * 从后往前扔掉否定值元素。（译者注：即一旦遇到迭代函数返回true马上跳出并返回剩余的元素）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * var resolve = _.partial(_.map, _, 'user');
@@ -4496,12 +4521,14 @@
      * Elements are dropped until `predicate` returns falsey. The predicate is
      * invoked with three arguments: (value, index, array).
      *
+     * 从前往后扔掉否定值元素。（译者注：即一旦遇到迭代函数返回true马上跳出并返回剩余的元素）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * var resolve = _.partial(_.map, _, 'user');
@@ -4539,14 +4566,17 @@
      *
      * **Note:** This method mutates `array`.
      *
+     * 把数组从下标[start, end)的元素填充成新值。
+     * 注意：该方法会修改原数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to fill.
-     * @param {*} value The value to fill `array` with.
-     * @param {number} [start=0] The start position.
-     * @param {number} [end=array.length] The end position.
-     * @returns {Array} Returns `array`.
+     * @param {Array} array The array to fill.需要填充的数组。
+     * @param {*} value The value to fill `array` with.填充的新值。
+     * @param {number} [start=0] The start position.开始位置。
+     * @param {number} [end=array.length] The end position.结束位置。
+     * @returns {Array} Returns `array`.返回修改后的原数组。
      * @example
      *
      * var array = [1, 2, 3];
@@ -4577,12 +4607,14 @@
      * This method is like `_.find` except that it returns the index of the first
      * element `predicate` returns truthy for instead of the element itself.
      *
+     * 这个方法类似于`_.find`，但是它是返回迭代函数为true的第一个元素下标而不是返回自身。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {number} Returns the index of the found element, else `-1`.
+     * @param {Array} array The array to search.需要搜索的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {number} Returns the index of the found element, else `-1`.返回所发现的元素下标，否则返回-1。
      * @example
      *
      * var users = [
@@ -4616,12 +4648,14 @@
      * This method is like `_.findIndex` except that it iterates over elements
      * of `collection` from right to left.
      *
+     * 这个方法类似于`_.findIndex`，但是它是从后往前遍历。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {number} Returns the index of the found element, else `-1`.
+     * @param {Array} array The array to search.需要搜索的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {number} Returns the index of the found element, else `-1`.返回所发现的元素下标，否则返回-1。
      * @example
      *
      * var users = [
@@ -4654,11 +4688,13 @@
     /**
      * Gets the first element of `array`.
      *
+     * 返回数组的第一个元素。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @returns {*} Returns the first element of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @returns {*} Returns the first element of `array`.返回数组的第一个元素。
      * @example
      *
      * _.first([1, 2, 3]);
@@ -4674,11 +4710,13 @@
     /**
      * Flattens `array` a single level.
      *
+     * 对数组进行降一维扁平化。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to flatten.
-     * @returns {Array} Returns the new flattened array.
+     * @param {Array} array The array to flatten.需要扁平化的数组。
+     * @returns {Array} Returns the new flattened array.返回扁平化后的新数组。
      * @example
      *
      * _.flatten([1, [2, 3, [4]]]);
@@ -4692,11 +4730,13 @@
     /**
      * This method is like `_.flatten` except that it recursively flattens `array`.
      *
+     * 对数组进行递归扁平化。（译者注：即结果是一维数组）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to recursively flatten.
-     * @returns {Array} Returns the new flattened array.
+     * @param {Array} array The array to recursively flatten.需要递归扁平化的数组。
+     * @returns {Array} Returns the new flattened array.返回扁平化后的新数组。
      * @example
      *
      * _.flattenDeep([1, [2, 3, [4]]]);
@@ -4714,14 +4754,18 @@
      * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
      * performs a faster binary search.
      *
+     * 返回value第一次出现在array的索引值，如果不存在则返回-1，该方法使用了SameValueZero比较算法。
+     * 如果fromIndex是负值，将会从后往前搜索。
+     * 如果fromIndex为true并且数组已排好序，则该方法使用性能更快的二分查找。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
+     * @param {Array} array The array to search.需要搜索的数组。
+     * @param {*} value The value to search for.需要查找的值。
      * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-     *  to perform a binary search on a sorted array.
-     * @returns {number} Returns the index of the matched value, else `-1`.
+     *  to perform a binary search on a sorted array.开始查找的索引值或者指定true使用二分查找。
+     * @returns {number} Returns the index of the matched value, else `-1`.查找成功返回索引值，否则返回-1。
      * @example
      *
      * _.indexOf([1, 2, 1, 2], 2);
@@ -4756,11 +4800,13 @@
     /**
      * Gets all but the last element of `array`.
      *
+     * 返回除了最后一个元素之外的数组片段。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * _.initial([1, 2, 3]);
@@ -4775,11 +4821,13 @@
      * arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
+     * 返回多个数组的交集，结果中的每个值都存在于传入的每个arrays（数组）里。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {...Array} [arrays] The arrays to inspect.
-     * @returns {Array} Returns the new array of shared values.
+     * @param {...Array} [arrays] The arrays to inspect.需要检查的数组。
+     * @returns {Array} Returns the new array of shared values.返回新交集数组。
      * @example
      * _.intersection([1, 2], [4, 2], [2, 1]);
      * // => [2]
@@ -4824,11 +4872,13 @@
     /**
      * Gets the last element of `array`.
      *
+     * 返回数组最后一个元素。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @returns {*} Returns the last element of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @returns {*} Returns the last element of `array`.返回数组最后一个元素。
      * @example
      *
      * _.last([1, 2, 3]);
@@ -4843,14 +4893,16 @@
      * This method is like `_.indexOf` except that it iterates over elements of
      * `array` from right to left.
      *
+     * 该方法类似于`_.indexOf`，但该方法返回从后往前匹配到的第一个值的下标。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
+     * @param {Array} array The array to search.需要搜索的数组。
+     * @param {*} value The value to search for.搜索值。
      * @param {boolean|number} [fromIndex=array.length-1] The index to search from
-     *  or `true` to perform a binary search on a sorted array.
-     * @returns {number} Returns the index of the matched value, else `-1`.
+     *  or `true` to perform a binary search on a sorted array.传入数字表示搜索起始位置，传入true表示对已排序数组进行二分查找。
+     * @returns {number} Returns the index of the matched value, else `-1`.返回匹配值下标或者找不到返回-1。
      * @example
      *
      * _.lastIndexOf([1, 2, 1, 2], 2);
@@ -4898,12 +4950,15 @@
      *
      * **Note:** Unlike `_.without`, this method mutates `array`.
      *
+     * 返回删除指定值后的新数组。
+     * 注意：该方法会修改原数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to modify.
-     * @param {...*} [values] The values to remove.
-     * @returns {Array} Returns `array`.
+     * @param {Array} array The array to modify.需要修改的数组。
+     * @param {...*} [values] The values to remove.需要删除的值。
+     * @returns {Array} Returns `array`.返回新数组。
      * @example
      *
      * var array = [1, 2, 3, 1, 2, 3];
@@ -4928,7 +4983,7 @@
             value = args[index];
 
         while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
-          splice.call(array, fromIndex, 1);
+          splice.call(array, fromIndex, 1);// splice = Array.prototype.splice
         }
       }
       return array;
@@ -4940,13 +4995,16 @@
      *
      * **Note:** Unlike `_.at`, this method mutates `array`.
      *
+     * 返回由删除指定下标元素组成的新数组。
+     * 注意：该方法会修改原数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to modify.
+     * @param {Array} array The array to modify.需要修改的数组。
      * @param {...(number|number[])} [indexes] The indexes of elements to remove,
-     *  specified individually or in arrays.
-     * @returns {Array} Returns the new array of removed elements.
+     *  specified individually or in arrays.指定删除的下标。
+     * @returns {Array} Returns the new array of removed elements.返回由已删除元素组成的新数组。
      * @example
      *
      * var array = [5, 10, 15, 20];
@@ -4973,12 +5031,15 @@
      *
      * **Note:** Unlike `_.filter`, this method mutates `array`.
      *
+     * 返回由删除那些迭代函数为true的元素所组成的新数组。
+     * 注意：该方法会修改原数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to modify.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new array of removed elements.
+     * @param {Array} array The array to modify.需要修改的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {Array} Returns the new array of removed elements.返回由删除元素组成的新数组。
      * @example
      *
      * var array = [1, 2, 3, 4];
@@ -5016,11 +5077,13 @@
     /**
      * Gets all but the first element of `array`.
      *
+     * 返回除了第一个元素以外的数组。（译者注：当元素个数≤1则返回空数组）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * _.rest([1, 2, 3]);
@@ -5036,13 +5099,16 @@
      * **Note:** This method is used instead of `Array#slice` to ensure dense
      * arrays are returned.
      *
+     * 返回指定开始下标`start`和结束下标`end`的之间数组片段，范围是[start, end)，不包括`end`。
+     * （译者注：start >= end 返回空数组）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to slice.
-     * @param {number} [start=0] The start position.
-     * @param {number} [end=array.length] The end position.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to slice.需要截取的数组。
+     * @param {number} [start=0] The start position.开始位置。
+     * @param {number} [end=array.length] The end position.结束位置。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      */
     function slice(array, start, end) {
       var length = array ? array.length : 0;
@@ -5060,12 +5126,14 @@
      * Uses a binary search to determine the lowest index at which `value` should
      * be inserted into `array` in order to maintain its sort order.
      *
+     * 使用二分查找确定value在array中的最小的位置序号，value按此序号插入能保持array原有的排序。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @param {Array} array The sorted array to inspect.需要检查的数组。
+     * @param {*} value The value to evaluate.插入值。
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.返回可插入的最小下标。
      * @example
      *
      * _.sortedIndex([30, 50], 40);
@@ -5083,13 +5151,15 @@
      * which is invoked for `value` and each element of `array` to compute their
      * sort ranking. The iteratee is invoked with one argument: (value).
      *
+     * 该方法类似于`_.sortedIndex`，但是它接受一个迭代函数用于计算数组每个值的ranking。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @param {Array} array The sorted array to inspect.数组。
+     * @param {*} value The value to evaluate.值。
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.返回可插入的最小下标。
      * @example
      *
      * var dict = { 'thirty': 30, 'forty': 40, 'fifty': 50 };
@@ -5110,12 +5180,13 @@
      * index at which `value` should be inserted into `array` in order to
      * maintain its sort order.
      *
+     * 该方法类似于`_.sortedIndex`，但是它返回最大可插入下标。
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @param {Array} array The sorted array to inspect.已排序数组。
+     * @param {*} value The value to evaluate.值。
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.返回可插入的最大下标。
      * @example
      *
      * _.sortedLastIndex([4, 5], 4);
@@ -5130,13 +5201,15 @@
      * which is invoked for `value` and each element of `array` to compute their
      * sort ranking. The iteratee is invoked with one argument: (value).
      *
+     * 该方法类似于`_.sortedLastIndex`，但它是返回符合条件的最大下标。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @param {Array} array The sorted array to inspect.数组。
+     * @param {*} value The value to evaluate.值。
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.返回可插入的最大下标。
      * @example
      *
      * // using the `_.property` callback shorthand
@@ -5150,13 +5223,15 @@
     /**
      * Creates a slice of `array` with `n` elements taken from the beginning.
      *
+     * 返回前n个元素组成的数组片段。（译者注：当n大于数组长度则返回原数组，当n<=0返回空数组）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {number} [n=1] The number of elements to take.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {number} [n=1] The number of elements to take.元素个数，默认为1。
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * _.take([1, 2, 3]);
@@ -5184,13 +5259,15 @@
     /**
      * Creates a slice of `array` with `n` elements taken from the end.
      *
+     * 返回后n个元素组成的数组片段。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {number} [n=1] The number of elements to take.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {number} [n=1] The number of elements to take.元素个数。
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * _.takeRight([1, 2, 3]);
@@ -5222,12 +5299,15 @@
      * taken until `predicate` returns falsey. The predicate is invoked with three
      * arguments: (value, index, array).
      *
+     * 返回一个从后往前满足迭代函数为true的数组片段，迭代函数有三个参数(value, index, array)。
+     * （译者注：即从后往前遍历直到遇到迭代函数return false）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * var resolve = _.partial(_.map, _, 'user');
@@ -5264,12 +5344,15 @@
      * are taken until `predicate` returns falsey. The predicate is invoked with
      * three arguments: (value, index, array).
      *
+     * 返回一个从前往后满足迭代函数为true的数组片段，迭代函数有三个参数(value, index, array)。
+     * （译者注：即从前往后遍历直到遇到迭代函数return false）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the slice of `array`.
+     * @param {Array} array The array to query.查询的数组。
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {Array} Returns the slice of `array`.返回数组片段。
      * @example
      *
      * var resolve = _.partial(_.map, _, 'user');
@@ -5306,17 +5389,20 @@
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
+     * 返回多个数组的并集。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {...Array} [arrays] The arrays to inspect.
-     * @returns {Array} Returns the new array of combined values.
+     * @param {...Array} [arrays] The arrays to inspect.数组。
+     * @returns {Array} Returns the new array of combined values.返回合并后的新数组。
      * @example
      *
      * _.union([1, 2], [4, 2], [2, 1]);
      * // => [1, 2, 4]
      */
     var union = restParam(function(arrays) {
+      // 先合并再去重
       return baseUniq(baseFlatten(arrays, false, true));
     });
 
@@ -5327,12 +5413,14 @@
      * is kept. Providing `true` for `isSorted` performs a faster search algorithm
      * for sorted arrays.
      *
+     * 返回去重后的新数组。如果参数为排好序的数组，则`isSorted`赋值为true。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted] Specify the array is sorted.
-     * @returns {Array} Returns the new duplicate free array.
+     * @param {Array} array The array to inspect.数组。
+     * @param {boolean} [isSorted] Specify the array is sorted.指定数组是否已排序。
+     * @returns {Array} Returns the new duplicate free array.返回新数组。
      * @example
      *
      * _.uniq([2, 1, 2]);
@@ -5356,13 +5444,15 @@
      * invoked for each element in `array` to generate the criterion by which
      * uniqueness is computed. The iteratee is invoked with one argument: (value).
      *
+     * 返回满足迭代函数的唯一数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted] Specify the array is sorted.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new duplicate free array.
+     * @param {Array} array The array to inspect.数组。
+     * @param {boolean} [isSorted] Specify the array is sorted.指定是否已排序。
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.迭代函数。
+     * @returns {Array} Returns the new duplicate free array.返回新数组。
      * @example
      *
      * _.uniqBy([1, 2.5, 1.5, 2], function(n) {
@@ -5396,11 +5486,14 @@
      * elements and creates an array regrouping the elements to their pre-zip
      * configuration.
      *
+     * 与`_.zip`功能相反的函数，给定若干arrays，返回一串联的新数组。
+     * 其中第一元素包含所有的输入数组的第一元素，其第二包含了所有的第二元素，依此类推。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array of grouped elements to process.
-     * @returns {Array} Returns the new array of regrouped elements.
+     * @param {Array} array The array of grouped elements to process.组合后的数组。
+     * @returns {Array} Returns the new array of regrouped elements.返回重新组合的新数组。
      * @example
      *
      * var zipped = _.zip(['fred', 'barney'], [30, 40], [true, false]);
@@ -5434,12 +5527,14 @@
      * how regrouped values should be combined. The iteratee is invoked with four
      * arguments: (accumulator, value, index, group).
      *
+     * 该方法类似`_.unzip`，但它接收一个迭代函数。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array of grouped elements to process.
-     * @param {Function} [iteratee=_.identity] The function to combine regrouped values.
-     * @returns {Array} Returns the new array of regrouped elements.
+     * @param {Array} array The array of grouped elements to process.组合后的数组。
+     * @param {Function} [iteratee=_.identity] The function to combine regrouped values.用于重新组合的迭代函数。
+     * @returns {Array} Returns the new array of regrouped elements.返回重新组合后的新数组。
      * @example
      *
      * var zipped = _.zip([1, 2], [10, 20], [100, 200]);
@@ -5466,12 +5561,14 @@
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
+     * 返回一个删除指定元素后的数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to filter.
-     * @param {...*} [values] The values to exclude.
-     * @returns {Array} Returns the new array of filtered values.
+     * @param {Array} array The array to filter.需要过滤的数组。
+     * @param {...*} [values] The values to exclude.删除的数据。
+     * @returns {Array} Returns the new array of filtered values.返回过滤后的新数组。
      * @example
      *
      * _.without([1, 2, 1, 3], 1, 2);
@@ -5485,11 +5582,13 @@
      * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
      * of the provided arrays.
      *
+     * 返回由多个数组的对称差组成的新数组。（译者注：对称差是除去交集以外的元素）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {...Array} [arrays] The arrays to inspect.
-     * @returns {Array} Returns the new array of values.
+     * @param {...Array} [arrays] The arrays to inspect.数组。
+     * @returns {Array} Returns the new array of values.返回新数组。
      * @example
      *
      * _.xor([1, 2], [4, 2]);
@@ -5515,11 +5614,13 @@
      * elements of the given arrays, the second of which contains the second elements
      * of the given arrays, and so on.
      *
+     * 将 每个arrays中相应位置的值合并在一起。（译者注：在合并分开保存的数据时很有用）
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {...Array} [arrays] The arrays to process.
-     * @returns {Array} Returns the new array of grouped elements.
+     * @param {...Array} [arrays] The arrays to process.数组。
+     * @returns {Array} Returns the new array of grouped elements.返回组合后的新数组。
      * @example
      *
      * _.zip(['fred', 'barney'], [30, 40], [true, false]);
@@ -5533,12 +5634,15 @@
      * e.g. `[[key1, value1], [key2, value2]]` or two arrays, one of property names
      * and one of corresponding values.
      *
+     * `_.pairs`的反操作，返回一个组合后的新对象。
+     * 参数只能是一个类似`[[key1, value1], [key2, value2]]`的二维数组或者两个分别对应属性名和值的数组。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} props The property names.
-     * @param {Array} [values=[]] The property values.
-     * @returns {Object} Returns the new object.
+     * @param {Array} props The property names.属性名。
+     * @param {Array} [values=[]] The property values.属性值。
+     * @returns {Object} Returns the new object.返回新对象。
      * @example
      *
      * _.zipObject([['fred', 30], ['barney', 40]]);
@@ -5571,12 +5675,14 @@
      * how grouped values should be combined. The iteratee is invoked with four
      * arguments: (accumulator, value, index, group).
      *
+     * 该方法类似于`_.zip`，但它接收一个4个参数的迭代函数(accumulator, value, index, group)。
+     * 
      * @static
      * @memberOf _
      * @category Array
-     * @param {...Array} [arrays] The arrays to process.
-     * @param {Function} [iteratee=_.identity] The function to combine grouped values.
-     * @returns {Array} Returns the new array of grouped elements.
+     * @param {...Array} [arrays] The arrays to process.数组。
+     * @param {Function} [iteratee=_.identity] The function to combine grouped values.用于组合的迭代函数。
+     * @returns {Array} Returns the new array of grouped elements.返回组合后的新数组。
      * @example
      *
      * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
@@ -7926,6 +8032,8 @@
     /**
      * Checks if `value` is classified as an `arguments` object.
      *
+     * 检测值是否`arguments`对象
+     * 
      * @static
      * @memberOf _
      * @category Lang
